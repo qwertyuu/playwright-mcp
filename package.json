@@ -15,7 +15,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "postinstall": "patch-package",
+    "postinstall": "npx patch-package",
     "lint": "npm run update-readme",
     "update-readme": "node update-readme.js",
     "docker-build": "docker build --no-cache -t playwright-mcp-dev:latest .",
