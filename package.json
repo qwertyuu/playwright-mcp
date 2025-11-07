@@ -14,6 +14,15 @@
     "name": "Microsoft Corporation"
   },
   "license": "Apache-2.0",
+  "files": [
+    "cli.js",
+    "index.js",
+    "index.d.ts",
+    "config.d.ts",
+    "README.md",
+    "LICENSE",
+    "patches"
+  ],
   "scripts": {
     "postinstall": "patch-package",
     "prepare": "patch-package",
