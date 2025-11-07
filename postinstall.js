@@ -19,21 +19,28 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
+// Get absolute path to this script's directory
+const scriptDir = path.resolve(__dirname);
+
 // Determine if we're being installed as a dependency or run directly from the repo
-const isInstalledAsDependency = __dirname.includes('node_modules');
+const isInstalledAsDependency = scriptDir.includes('node_modules');
 
 if (isInstalledAsDependency) {
   // We're installed as a dependency, need to apply patches from parent directory
-  const patchDir = path.join(__dirname, 'patches');
+  const patchDir = path.join(scriptDir, 'patches');
 
   // Check if patches directory exists
   if (fs.existsSync(patchDir)) {
     try {
-      // Navigate to parent's parent directory (up from node_modules/@playwright/mcp)
-      const projectRoot = path.resolve(__dirname, '../..');
+      // Navigate up from node_modules/@playwright/mcp to the project root
+      const projectRoot = path.resolve(scriptDir, '../../..');
+
+      // Use relative path for patch-dir to avoid Windows path issues
+      const relativePatchDir = 'node_modules/@playwright/mcp/patches';
 
       console.log('Applying Playwright MCP patches...');
-      execSync(`npx patch-package --patch-dir "${patchDir}"`, {
+
+      execSync(`npx patch-package --patch-dir "${relativePatchDir}"`, {
         cwd: projectRoot,
         stdio: 'inherit'
       });
@@ -48,7 +55,7 @@ if (isInstalledAsDependency) {
   try {
     console.log('Applying patches in development mode...');
     execSync('npx patch-package', {
-      cwd: __dirname,
+      cwd: scriptDir,
       stdio: 'inherit'
     });
   } catch (error) {
