@@ -21,11 +21,12 @@
     "config.d.ts",
     "README.md",
     "LICENSE",
-    "patches"
+    "patches",
+    "postinstall.js"
   ],
   "scripts": {
-    "postinstall": "patch-package",
-    "prepare": "patch-package",
+    "postinstall": "node postinstall.js",
+    "prepare": "node postinstall.js",
     "lint": "npm run update-readme",
     "update-readme": "node update-readme.js",
     "docker-build": "docker build --no-cache -t playwright-mcp-dev:latest .",
