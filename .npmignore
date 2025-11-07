@@ -4,4 +4,4 @@ LICENSE
 !cli.js
 !index.*
 !config.d.ts
-!patches
+!patches/
