@@ -69,6 +69,7 @@ test('test tool list proxy mode', async ({ startClient }) => {
     'browser_network_request_details',
     'browser_press_key',
     'browser_resize',
+    'browser_run_code',
     'browser_snapshot',
     'browser_tabs',
     'browser_take_screenshot',

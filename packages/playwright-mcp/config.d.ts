@@ -16,7 +16,19 @@
 
 import type * as playwright from 'playwright';
 
-export type ToolCapability = 'core' | 'core-tabs' | 'core-install' | 'vision' | 'pdf' | 'testing' | 'tracing';
+export type ToolCapability =
+  'config' |
+  'core' |
+  'core-navigation' |
+  'core-tabs' |
+  'core-input' |
+  'core-install' |
+  'network' |
+  'pdf' |
+  'storage' |
+  'testing' |
+  'vision' |
+  'devtools';
 
 export type Config = {
   /**
@@ -65,9 +77,19 @@ export type Config = {
     cdpHeaders?: Record<string, string>;
 
     /**
+     * Timeout in milliseconds for connecting to CDP endpoint. Defaults to 30000 (30 seconds). Pass 0 to disable timeout.
+     */
+    cdpTimeout?: number;
+
+    /**
      * Remote endpoint to connect to an existing Playwright server.
      */
     remoteEndpoint?: string;
+
+    /**
+     * Paths to TypeScript files to add as initialization scripts for Playwright page.
+     */
+    initPage?: string[];
 
     /**
      * Paths to JavaScript files to add as initialization scripts.
@@ -75,6 +97,13 @@ export type Config = {
      */
     initScript?: string[];
   },
+
+  /**
+   * Connect to a running browser instance (Edge/Chrome only). If specified, `browser`
+   * config is ignored.
+   * Requires the "Playwright MCP Bridge" browser extension to be installed.
+   */
+  extension?: boolean;
 
   server?: {
     /**
@@ -99,6 +128,7 @@ export type Config = {
    *   - 'core': Core browser automation features.
    *   - 'pdf': PDF generation and manipulation.
    *   - 'vision': Coordinate-based interactions.
+   *   - 'devtools': Developer tools features.
    */
   capabilities?: ToolCapability[];
 
@@ -137,14 +167,34 @@ export type Config = {
    */
   outputDir?: string;
 
+  /**
+   * Whether to save snapshots, console messages, network logs and other session logs to a file or to the standard output. Defaults to "stdout".
+   */
+  outputMode?: 'file' | 'stdout';
+
+  console?: {
+    /**
+     * The level of console messages to return. Each level includes the messages of more severe levels. Defaults to "info".
+     */
+    level?: 'error' | 'warning' | 'info' | 'debug';
+  },
+
   network?: {
     /**
      * List of origins to allow the browser to request. Default is to allow all. Origins matching both `allowedOrigins` and `blockedOrigins` will be blocked.
+     *
+     * Supported formats:
+     * - Full origin: `https://example.com:8080` - matches only that origin
+     * - Wildcard port: `http://localhost:*` - matches any port on localhost with http protocol
      */
     allowedOrigins?: string[];
 
     /**
      * List of origins to block the browser to request. Origins matching both `allowedOrigins` and `blockedOrigins` will be blocked.
+     *
+     * Supported formats:
+     * - Full origin: `https://example.com:8080` - matches only that origin
+     * - Wildcard port: `http://localhost:*` - matches any port on localhost with http protocol
      */
     blockedOrigins?: string[];
   };
@@ -170,5 +220,22 @@ export type Config = {
    * Whether to send image responses to the client. Can be "allow", "omit", or "auto". Defaults to "auto", which sends images if the client can display them.
    */
   imageResponses?: 'allow' | 'omit';
-};
 
+  snapshot?: {
+    /**
+     * When taking snapshots for responses, specifies the mode to use.
+     */
+    mode?: 'incremental' | 'full' | 'none';
+  };
+
+  /**
+   * Whether to allow file uploads from anywhere on the file system.
+   * By default (false), file uploads are restricted to paths within the MCP roots only.
+   */
+  allowUnrestrictedFileAccess?: boolean;
+
+  /**
+   * Specify the language to use for code generation.
+   */
+  codegen?: 'typescript' | 'none';
+};

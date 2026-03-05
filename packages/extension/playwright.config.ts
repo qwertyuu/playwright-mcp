@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Copyright (c) Microsoft Corporation.
  *
@@ -15,10 +14,18 @@
  * limitations under the License.
  */
 
-const { program } = require('playwright-core/lib/utilsBundle');
-const { decorateCommand } = require('playwright/lib/mcp/program');
+import { defineConfig } from '@playwright/test';
 
-const packageJSON = require('./package.json');
-const p = program.version('Version ' + packageJSON.version).name('Playwright MCP');
-decorateCommand(p, packageJSON.version)
-void program.parseAsync(process.argv);
+import type { TestOptions } from '../playwright-mcp/tests/fixtures';
+
+export default defineConfig<TestOptions>({
+  testDir: './tests',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'list',
+  projects: [
+    { name: 'chromium', use: { mcpBrowser: 'chromium' } },
+  ],
+});
